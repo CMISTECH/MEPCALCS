@@ -1,0 +1,351 @@
+<div *ngIf="!isLoading" class="container" [ngClass]="{'d-none': showResult, 'd-block': !showResult}">
+    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+        <h4 class="mb-sm-0">Expansion Tank Sizer</h4>
+
+        <div class="page-title-right">
+            <ol class="breadcrumb m-0">
+                <li class="breadcrumb-item"><a href="javascript: void(0);"><i class='bx bx-info-circle'></i>Important
+                        Remark</a></li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <form class="form-horizontal" [formGroup]="calculationForm" (ngSubmit)="onSubmit()">
+                <!-- TANK INFORMATION -->
+                <h4 class="card-title">Tank Information</h4>
+                <div class="row">
+                    <div class="col-xl-4">
+                        <div class="form-group mb-3">
+                            <label class="form-label">Project</label>
+                            <input type="text" class="form-control" formControlName="project">
+                        </div>
+                    </div>
+                    <div class="col-xl-4">
+                        <div class="form-group mb-3">
+                            <label class="form-label">Expansion Tank Ref</label>
+                            <input type="text" class="form-control" formControlName="expansionTankRef">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- UNITS -->
+                <h4 class="card-title">Units</h4>
+                <div class="row">
+                    <div class="col-xl-4">
+                        <div class="form-group">
+                            <label class="form-label">Units System</label>
+                            <ng-select (change)="unitSystemChanged($event)" [searchable]="false" [clearable]="false"
+                                formControlName="unitSystem">
+                                <ng-option *ngFor="let unitSystem of unitsSystems" [value]="unitSystem.value">
+                                    {{unitSystem.label}}</ng-option>
+                            </ng-select>
+                        </div>
+                    </div>
+                    <div class="col-xl-4">
+                        <div class="form-group">
+                            <label class="form-label">Fluid Type</label>
+                            <ng-select [searchable]="false" [clearable]="false" formControlName="fluidType">
+                                <ng-option *ngFor="let fluidType of fluidTypes" [value]="fluidType.value">
+                                    {{fluidType.label}}</ng-option>
+                            </ng-select>
+                        </div>
+                    </div>
+                    <div class="col-xl-4">
+                        <div class="form-group">
+                            <label class="form-label">System Type</label>
+                            <ng-select (change)="systemTypeChanged($event)" [searchable]="false" [clearable]="false" formControlName="systemType">
+                                <ng-option *ngFor="let systemType of systemTypes" [value]="systemType.id">
+                                    {{systemType.description}}</ng-option>
+                            </ng-select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xl-4">
+                        <div class="form-group">
+                            <label class="form-label">Tank Type</label>
+                            <ng-select (change)="tankTypeChanged($event)" [searchable]="false" [clearable]="false" formControlName="tankType">
+                                <ng-option *ngFor="let tankType of tankTypes" [value]="tankType.id">
+                                    {{tankType.description}}</ng-option>
+                            </ng-select>
+                        </div>
+                    </div>
+                    <div class="col-xl-4">
+                        <div class="form-group">
+                            <label class="form-label">Piping Material</label>
+                            <ng-select [searchable]="false" [clearable]="false" formControlName="pipingMaterial">
+                                <ng-option *ngFor="let pipingMaterial of pipingMaterials" [value]="pipingMaterial.id">
+                                    {{pipingMaterial.description}}</ng-option>
+                            </ng-select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-center my-2">
+                    <img class="img-fluid" [src]="getImage()">
+                </div>
+
+                <!-- SYSTEM VOLUME -->
+                <h4 class="card-title">System Volume</h4>
+                <div class="row">
+                    <div class="col-xl-4">
+                        <div class="form-group">
+                            <label class="form-label">Fluid Volume In Pipes and Tanks</label>
+                            <div class="input-group">
+                                <input type="number" min="0" pattern="\d+(\.\d+)?" class="form-control"
+                                    formControlName="fluidVolume"
+                                    [ngClass]="{ 'is-invalid': isSubmitted && f['fluidVolume'].errors }">
+                                <span class="input-group-text">{{f['unitSystem'].value == 1 ? 'm³' : 'US
+                                    Gallon'}}</span>
+
+                                <div *ngIf="isSubmitted && f['fluidVolume'].errors" class="invalid-tooltip">
+                                    <span *ngIf="f['fluidVolume'].errors?.['required']">Fluid Volume In Pipes and Tanks
+                                        is required.</span>
+                                    <span
+                                        *ngIf="!f['fluidVolume'].errors?.['required'] && f['fluidVolume'].errors?.['pattern']">Value
+                                        should be valid and contains a positive number.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FLUID VOLUME IN EQUIPMENT -->
+                <h4 class="card-title">Fluid Volume in Equipment</h4>
+                <div class="table-responsive">
+                    <table class="table table-borderless table-list">
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th>Fluid volume in Equipment/Tanks</th>
+                                <th style="width: 70px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody formArrayName="fluidVolumeEquipments">
+                            <ng-container
+                                *ngFor="let fluidVolumeEquipment of fluidVolumeEquipments['controls']; let i = index">
+                                <tr [formGroupName]="i">
+                                    <td>
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" formControlName="description"
+                                                    [ngClass]="{ 'is-invalid': isSubmitted && fluidVolumeEquipment.get('description')!.errors }">
+
+                                                <div *ngIf="isSubmitted && fluidVolumeEquipment.get('description')!.errors"
+                                                    class="invalid-tooltip">
+                                                    <span
+                                                        *ngIf="fluidVolumeEquipment.get('description')!.errors!['required']">Description
+                                                        is required.</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <input type="number" min="0" pattern="\d+(\.\d+)?" class="form-control"
+                                                    formControlName="fluidVolume"
+                                                    [ngClass]="{ 'is-invalid': isSubmitted && fluidVolumeEquipment.get('fluidVolume')?.errors }">
+                                                <span class="input-group-text">{{f['unitSystem'].value == 1 ? 'm³' : 'US
+                                                    Gallon'}}</span>
+
+                                                <div *ngIf="isSubmitted && fluidVolumeEquipment.get('fluidVolume')?.errors"
+                                                    class="invalid-tooltip">
+                                                    <span
+                                                        *ngIf="fluidVolumeEquipment.get('fluidVolume')?.errors!['required']">Fluid
+                                                        Volume is required.</span>
+                                                    <span
+                                                        *ngIf="!fluidVolumeEquipment.get('fluidVolume')?.errors!['required'] && (fluidVolumeEquipment.get('fluidVolume')?.errors!['pattern'])">Value
+                                                        should be valid and contains a positive number.
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <ul class="list-unstyled toolbar text-center gap-1 mb-0">
+                                            <li>
+                                                <a href="javascript: void(0);" class="btn btn-sm btn-soft-danger"
+                                                    *ngIf="fluidVolumeEquipments.length > 1" title="Remove Equipment"
+                                                    (click)="removeEquipment(i);">
+                                                    <i class='bx bxs-trash'></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="d-flex justify-content-center my-3">
+                    <button class="btn btn-outline-primary" type="button" (click)="addEquipment();">Add
+                        Equipment</button>
+                </div>
+
+                <div *ngIf="f['systemType'].value == 3" class="row">
+                    <div class="col-xl-4">
+                        <div class="form-group">
+                            <label class="form-label">Volume in Solar Field</label>
+                            <div class="input-group">
+                                <input type="number" min="0" pattern="\d+(\.\d+)?" class="form-control"
+                                    formControlName="solarVolume"
+                                    [ngClass]="{ 'is-invalid': isSubmitted && f['solarVolume'].errors }">
+                                <span class="input-group-text">{{f['unitSystem'].value == 1 ? 'm³' : 'US
+                                    Gallon'}}</span>
+
+                                <div *ngIf="isSubmitted && f['solarVolume'].errors" class="invalid-tooltip">
+                                    <span *ngIf="f['solarVolume'].errors?.['required']">Solar Volume is required.</span>
+                                    <span
+                                        *ngIf="!f['solarVolume'].errors?.['required'] && f['solarVolume'].errors?.['pattern']">Value
+                                        should be valid and contains a positive number.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 mt-auto">
+                        <div class="form-group">
+                            <label class="form-label">= No. of Collectors X Collector Content</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- OPERATION PARAMETERS -->
+                <h4 class="card-title">Operation Parameters</h4>
+                <div class="row">
+                    <div class="col-xl-4">
+                        <div class="form-group">
+                            <label class="form-label">Max Ambient Temperature</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" formControlName="maxAmbientTemperature"
+                                    [ngClass]="{ 'is-invalid': isSubmitted && f['maxAmbientTemperature'].errors }">
+                                <span class="input-group-text">{{f['unitSystem'].value == 1 ? 'ºC' : 'ºF'}}</span>
+
+                                <div *ngIf="isSubmitted && f['maxAmbientTemperature'].errors" class="invalid-tooltip">
+                                    <span *ngIf="f['maxAmbientTemperature'].errors?.['required']">Max Ambient
+                                        Temperature is required.</span>
+                                    <span
+                                        *ngIf="!f['maxAmbientTemperature'].errors?.['required'] && f['maxAmbientTemperature'].errors?.['maxAmbientTemperatureRange']">Out
+                                        of range.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="f['tankType'].value == 2" class="col-xl-4">
+                        <div class="form-group">
+                            <label class="form-label">Height (H)</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" formControlName="height"
+                                    [ngClass]="{ 'is-invalid': isSubmitted && f['height'].errors }">
+                                <span class="input-group-text">{{f['unitSystem'].value == 1 ? 'm' : 'ft'}}</span>
+
+                                <div *ngIf="isSubmitted && f['height'].errors" class="invalid-tooltip">
+                                    <span *ngIf="f['height'].errors?.['required']">Height is required.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xl-4">
+                        <div class="form-group">
+                            <label class="form-label">Max Operating Temperature</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" formControlName="maxOperatingTemperature"
+                                    [ngClass]="{ 'is-invalid': isSubmitted && f['maxOperatingTemperature'].errors }">
+                                <span class="input-group-text">{{f['unitSystem'].value == 1 ? 'ºC' : 'ºF'}}</span>
+
+                                <div *ngIf="isSubmitted && f['maxOperatingTemperature'].errors" class="invalid-tooltip">
+                                    <span *ngIf="f['maxOperatingTemperature'].errors?.['required']">Max Operating
+                                        Temperature is required.</span>
+                                    <span
+                                        *ngIf="!f['maxOperatingTemperature'].errors?.['required'] && f['maxOperatingTemperature'].errors?.['maxOperatingTemperatureRange']">Out
+                                        of range.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="f['tankType'].value == 2" class="col-xl-4">
+                        <div class="form-group">
+                            <label class="form-label">Min Pressure At Highest Point</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" formControlName="minPressureAtHighestPoint"
+                                    [ngClass]="{ 'is-invalid': isSubmitted && f['minPressureAtHighestPoint'].errors }">
+                                <span class="input-group-text">{{f['unitSystem'].value == 1 ? 'barg' : 'PSIG'}}</span>
+
+                                <div *ngIf="isSubmitted && f['minPressureAtHighestPoint'].errors"
+                                    class="invalid-tooltip">
+                                    <span *ngIf="f['minPressureAtHighestPoint'].errors?.['required']">Min Pressure At
+                                        Highest Point is required.</span>
+                                    <span
+                                        *ngIf="!f['minPressureAtHighestPoint'].errors?.['required'] && f['unitSystem'].value == 1 && f['minPressureAtHighestPoint'].errors?.['minPressureAtHighestPointRange']">Minimum
+                                        value = 0.5 barg.</span>
+                                    <span
+                                        *ngIf="!f['minPressureAtHighestPoint'].errors?.['required'] && f['unitSystem'].value == 2 && f['minPressureAtHighestPoint'].errors?.['minPressureAtHighestPointRange']">Minimum
+                                        value = 10 PSIG.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xl-4">
+                        <div class="form-group">
+                            <label class="form-label">Fluid Temperature At Filling</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" formControlName="fluidTemperatureAtFilling"
+                                    [ngClass]="{ 'is-invalid': isSubmitted && f['fluidTemperatureAtFilling'].errors }">
+                                <span class="input-group-text">{{f['unitSystem'].value == 1 ? 'ºC' : 'ºF'}}</span>
+
+                                <div *ngIf="isSubmitted && f['fluidTemperatureAtFilling'].errors"
+                                    class="invalid-tooltip">
+                                    <span *ngIf="f['fluidTemperatureAtFilling'].errors?.['required']">Fluid Temperature
+                                        At Filling is required.</span>
+                                    <span
+                                        *ngIf="!f['fluidTemperatureAtFilling'].errors?.['required'] && f['fluidTemperatureAtFilling'].errors?.['fluidTemperatureAtFillingRange']">Out
+                                        of range.</span>
+                                    <span
+                                        *ngIf="!f['fluidTemperatureAtFilling'].errors?.['required'] && f['fluidTemperatureAtFilling'].errors?.['comparisionFluidTemperatureAtFilling']">Filling
+                                        Temperature is higher than Max Operating Temperature (No expansion).</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="f['tankType'].value == 2" class="col-xl-4">
+                        <div class="form-group">
+                            <label class="form-label">Setting Of PSV</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" formControlName="settingOfPVC"
+                                    [ngClass]="{ 'is-invalid': isSubmitted && f['settingOfPVC'].errors }">
+                                <span class="input-group-text">{{f['unitSystem'].value == 1 ? 'barg' : 'PSIG'}}</span>
+
+                                <div *ngIf="isSubmitted && f['settingOfPVC'].errors" class="invalid-tooltip">
+                                    <span *ngIf="f['settingOfPVC'].errors?.['required']">Setting Of PSV is
+                                        required.</span>
+                                    <span
+                                        *ngIf="!f['settingOfPVC'].errors?.['required'] && f['settingOfPVC'].errors?.['comparisionSettingOfPSV']">PSV
+                                        Setting is lower than or equal to Minimum Pressure.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FORM SUBMIT -->
+                <div class="d-flex justify-content-center mt-4 mb-2">
+                    <button class="btn btn-rounded btn-primary btn-fixed" type="submit">
+                        <i *ngIf="isSubmitting" class="bx bx-loader bx-spin align-middle"></i>
+                        <span *ngIf="!isSubmitting">Calculate</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<app-loader *ngIf="isLoading"></app-loader>
+
+<app-expansion-tank-sizer-preview [ngClass]="{'d-none': !showResult, 'd-block': showResult}" [data]="responseData"
+    (showInput)="showResult = false"></app-expansion-tank-sizer-preview>

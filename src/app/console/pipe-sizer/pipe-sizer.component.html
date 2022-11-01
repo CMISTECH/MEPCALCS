@@ -1,0 +1,217 @@
+<div *ngIf="!isLoading" class="container" [ngClass]="{'d-none': showResult, 'd-block': !showResult}">
+    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+        <h4 class="mb-sm-0">Pipe Sizer</h4>
+
+        <div class="page-title-right">
+            <ol class="breadcrumb m-0">
+                <li class="breadcrumb-item"><a href="javascript: void(0);"><i class='bx bx-info-circle'></i>Important Remark</a></li>                
+            </ol>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <form class="form-horizontal" [formGroup]="calculationForm" (ngSubmit)="onSubmit()">
+                <!-- UNITS AND WORKING FLUID -->
+                <div class="row">
+                    <div class="col-xl-6">
+                        <h5 class="card-title">Units</h5>
+                        <div class="row">
+                            <div class="col-xl-6">
+                                <div class="form-group">
+                                    <label class="form-label">Units System</label>
+                                    <ng-select (change)="unitSystemChanged($event)" [searchable]="false"
+                                        [clearable]="false" formControlName="unitSystem">
+                                        <ng-option *ngFor="let unitSystem of unitsSystems" [value]="unitSystem.value">
+                                            {{unitSystem.label}}</ng-option>
+                                    </ng-select>
+                                </div>
+                            </div>
+                            <div class="col-xl-6">
+                                <div class="form-group">
+                                    <label class="form-label">Flow Rate</label>
+                                    <ng-select (change)="flowRateChanged($event)" [searchable]="false"
+                                        [clearable]="false" formControlName="flowRateUnit">
+                                        <ng-option *ngFor="let rate of flowRates" [value]="rate.value">
+                                            {{rate.label}}</ng-option>
+                                    </ng-select>
+                                </div>
+                            </div>                            
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <h5 class="card-title">Working Fluid</h5>
+                        <div class="row">
+                            <div class="col-xl-6">
+                                <div class="form-group">
+                                    <label class="form-label">Fluid Type</label>
+                                    <ng-select [searchable]="false"
+                                        [clearable]="false" formControlName="fluidType">
+                                        <ng-option *ngFor="let fluidType of fluidTypes" [value]="fluidType.value">
+                                            {{fluidType.label}}</ng-option>
+                                    </ng-select>
+                                </div>
+                            </div>
+                            <div class="col-xl-6">
+                                <div class="form-group">
+                                    <label class="form-label">Fluid Temperature</label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" formControlName="fluidTemperature"
+                                            [ngClass]="{ 'is-invalid': isSubmitted && f['fluidTemperature'].errors }">
+                                        <!-- <span class="input-group-text">º{{f['fluidTemperatureUnit'].value}}</span> -->
+                                        <span class="input-group-text">{{f['unitSystem'].value == 1 ? 'ºC' : 'ºF'}}</span>
+
+                                        <div *ngIf="isSubmitted && f['fluidTemperature'].errors" class="invalid-tooltip">
+                                            <span *ngIf="f['fluidTemperature'].errors['required']">Fluid Temperature is required.</span>
+                                            <span *ngIf="!f['fluidTemperature'].errors['required'] && f['fluidTemperature'].errors['temperatureRange']">
+                                                Out of range.
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PIPE TYPE -->
+                <h4 class="card-title">Pipe Type</h4>
+                <div class="row">
+                    <div class="col-xl-3">
+                        <div class="form-group">
+                            <label class="form-label">Pipe Material</label>
+                            <ng-select (change)="pipeMaterialChanged($event)" [searchable]="false" [clearable]="false"
+                                formControlName="pipeMaterial">
+                                <ng-option *ngFor="let pipeMaterial of pipeMaterials" [value]="pipeMaterial.value">
+                                    {{pipeMaterial.label}}</ng-option>
+                            </ng-select>
+                        </div>
+                    </div>
+                    <div class="col-xl-3">
+                        <div class="form-group">
+                            <label class="form-label">Standard System</label>
+                            <ng-select (change)="standardSystemChanged($event)" [searchable]="false" [clearable]="false"
+                                formControlName="standardSystem">
+                                <ng-option *ngFor="let standardSystem of standardSystems"
+                                    [value]="standardSystem.value">{{standardSystem.label}}</ng-option>
+                            </ng-select>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="form-group">
+                            <label class="form-label">Pipe Standard</label>
+                            <label class="form-control">{{f['sizeStandard'].value.label}}</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xl-3">
+                        <div class="form-group">
+                            <label class="form-label">Pipe Grade</label>
+                            <ng-select [searchable]="false"
+                                [clearable]="false" formControlName="pipeGrade">
+                                <ng-option *ngFor="let pipeGrade of pipeGrades"
+                                    [value]="pipeGrade.value">{{pipeGrade.label}}</ng-option>
+                            </ng-select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FLOW RATE & SIZING CRITERIA-->
+                <h4 class="card-title">Flow Rate & Sizing Criteria</h4>
+                <div class="row">
+                    <div class="col-xl-3 mt-auto">
+                        <div class="form-group">
+                            <label class="form-label">Flow Rate</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" formControlName="flowRate"
+                                    [ngClass]="{'is-invalid': isSubmitted && f['flowRate'].errors}">
+                                <span class="input-group-text">{{flowRate.label}}</span>
+                                
+                                <div *ngIf="isSubmitted && f['flowRate'].errors" class="invalid-tooltip">
+                                    <span *ngIf="f['flowRate'].errors?.['required']">Flow Rate is Required.</span>
+                                    <span *ngIf="!f['flowRate'].errors?.['required'] && f['flowRate'].errors?.['flowRateRange']">Out of
+                                        range.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-9">
+                        <div class="row">
+                            <div class="col-xl-4">
+                                <div class="form-check mb-3">
+                                    <input type="radio" id="pressureDropCriteria" class="form-check-input" formControlName="criteria" [value]="1" (change)="changeCriteria()">
+                                    <label class="form-check-label">
+                                        Pressure Drop Criteria
+                                    </label>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xl-12">
+                                        <div class="form-group">
+                                            <label class="form-label">Max Allowed Pressure Drop</label>
+                                            <div class="input-group">
+                                                <input type="number" class="form-control" formControlName="maxAllowedPressureDrop"
+                                                    [ngClass]="{'is-invalid': isSubmitted && f['maxAllowedPressureDrop'].errors}">
+                                                <span class="input-group-text">{{f['unitSystem'].value == 1 ? 'Pa/m' : 'ft/100ft'}}</span>
+                                            
+                                                <div *ngIf="isSubmitted && f['maxAllowedPressureDrop'].errors" class="invalid-tooltip">
+                                                    <span *ngIf="f['maxAllowedPressureDrop'].errors?.['required']">
+                                                        Max Allowed Pressure Drop is Required.
+                                                    </span>
+                                                    <span *ngIf="!f['maxAllowedPressureDrop'].errors?.['required'] && f['maxAllowedPressureDrop'].errors?.['maxAllowedPressureDropRange']">
+                                                        Out of range.
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-4">
+                                <div class="form-check mb-3">
+                                    <input type="radio" id="velocityCriteria" class="form-check-input" formControlName="criteria" [value]="2" (change)="changeCriteria()">
+                                    <label class="form-check-label">
+                                        Velocity Criteria
+                                    </label>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xl-12">
+                                        <div class="form-group">
+                                            <label class="form-label">Max Allowed Velocity</label>
+                                            <div class="input-group">
+                                                <input type="number" class="form-control" formControlName="maxAllowedVelocity"
+                                                    [ngClass]="{'is-invalid': isSubmitted && f['maxAllowedVelocity'].errors}">
+                                                <span class="input-group-text">{{f['unitSystem'].value == 1 ? 'm/s' : 'fps'}}</span>
+                                            
+                                                <div *ngIf="isSubmitted && f['maxAllowedVelocity'].errors" class="invalid-tooltip">
+                                                    <span *ngIf="f['maxAllowedVelocity'].errors?.['required']">
+                                                        Max Allowed Velocity is Required.
+                                                    </span>
+                                                    <span *ngIf="!f['maxAllowedVelocity'].errors?.['required'] && f['maxAllowedVelocity'].errors?.['maxAllowedVelocityRange']">
+                                                        Out of range.
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FORM SUBMIT -->
+                <div class="d-flex justify-content-center mt-4 mb-2">
+                    <button class="btn btn-rounded btn-primary btn-fixed" type="submit">
+                        <i *ngIf="isSubmitting" class="bx bx-loader bx-spin align-middle"></i>
+                        <span *ngIf="!isSubmitting">Calculate</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<app-loader *ngIf="isLoading"></app-loader>
+
+<app-pipe-sizer-preview [ngClass]="{'d-none': !showResult, 'd-block': showResult}" [data]="responseData" (showInput)="showResult = false"></app-pipe-sizer-preview>

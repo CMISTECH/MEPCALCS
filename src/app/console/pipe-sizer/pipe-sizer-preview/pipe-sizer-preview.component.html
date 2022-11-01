@@ -1,0 +1,66 @@
+<div class="container">
+    <div class="card">
+        <div class="card-body">
+            <div id="top-panel" class="d-flex my-3 gap-2">
+                <button class="btn btn-rounded btn-light" (click)="showInput.emit()">
+                    <i class='bx bx-arrow-back me-2'></i>Back
+                </button>                
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-preview table-borderless">
+                    <tbody>
+                        <tr>
+                            <td class="mainHeader">PIPE SIZER CALCULATION</td>
+                        </tr>
+                        <tr>
+                            <td class="subHeader">Pump Information</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table class="table table-preview table-bordered">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                Flow Rate
+                                            </td>
+                                            <td>
+                                                <span>{{this.data.flowRate + ' ' + this.data.flowRateUnit}}</span>
+                                            </td>
+                                            <td>
+                                                Pipe Size
+                                            </td>
+                                            <td>
+                                                <span>{{this.data.pipeSize}}</span>
+                                            </td>
+                                            <td>
+                                                Internal Diameter
+                                            </td>
+                                            <td>
+                                                <span>{{this.data.iDiameter + ' ' + this.data.iDiameterUnit}}</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Flow Velocity
+                                            </td>
+                                            <td>
+                                                <span>{{this.data.velocity + ' ' + this.data.velocityUnit}}</span>
+                                            </td>
+                                            <td>
+                                                Pressure Drop
+                                            </td>
+                                            <td>
+                                                <span>{{this.data.pressureDrop + ' ' + this.data.pressureDropUnit}}</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

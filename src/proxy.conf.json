@@ -1,0 +1,8 @@
+{
+    "/api": {
+        "target": "https://www.mepcalcs.com/modcalc-production",                  
+        "secure": false,
+        "changeOrigin": true,
+        "pathRewrite": {"^/api" : ""}
+    }
+}

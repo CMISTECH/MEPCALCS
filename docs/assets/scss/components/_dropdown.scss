@@ -1,0 +1,90 @@
+// 
+// _dropdown.scss
+// 
+
+.dropdown-menu {
+    box-shadow: 0 1rem 3rem rgb(0 0 0 / 18%);
+    border: 0 solid rgba(0,0,0,.15);
+    border-radius: 0.25rem;
+    animation-name: DropDownSlide;
+    animation-duration: .3s;
+    animation-fill-mode: both;
+    margin: 0;
+    position: absolute;
+    z-index: 1000;
+
+    &.dropdown-megamenu {
+        width: calc(100% * 3 + 3rem);    
+        padding: 24px;     
+        
+        .pipetype {
+            cursor: pointer;
+            
+            .card {
+                .card-body {
+                    min-height: 210px;
+                    p {
+                        font-size: 14px;
+                        line-height: 22px;
+                        font-weight: 500;
+                        color: #74788d;
+                    }
+                }
+            }
+            
+            &:hover {
+                .card {
+                    .card-body {
+                        background-color: #f5f8fd;
+                    }
+                }
+            }
+        }        
+    }
+
+    &.show {
+        top: 100% !important;
+    }
+}
+
+.dropdown-menu-right {
+    right: 0 !important;
+    left: auto !important;
+}
+
+.dropdown-menu-left {
+    left: 0 !important;
+    right: auto !important;
+}
+
+.dropdown-menu[x-placement^=right],
+.dropdown-menu[x-placement^=top],
+.dropdown-menu[x-placement^=left] {
+    top: auto !important;
+    animation: none !important;
+}
+
+@keyframes DropDownSlide {
+    100% {
+        -webkit-transform: translateY(0);
+        transform: translateY(0)
+    }
+
+    0% {
+        -webkit-transform: translateY(10px);
+        transform: translateY(10px)
+    }
+}
+
+@media (max-width: 1200px) {
+    .dropdown-menu {
+        &.dropdown-megamenu {
+            width: 100%;
+        }
+    }    
+}
+
+.dropdown-divider {
+    border-top-color: #eff2f7;
+}
+

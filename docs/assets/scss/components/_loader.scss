@@ -1,0 +1,70 @@
+/*--------------------------------------------------------------
+# Loading Indicator
+--------------------------------------------------------------*/
+.loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #f5f8fd;
+    z-index: 1001;
+
+    .wrapper {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        text-align: center;
+        transform: translate(-50%, -50%);
+
+        .dot {
+            width: 5px;
+            height: 5px;
+            background: #000e4b;
+            display: inline-block;
+            position: relative;
+            margin: 0px 2px;
+            border-radius: 50%;
+            opacity: 0;
+            animation: loading 3000ms ease-in-out infinite;
+
+            &:nth-child(5) {
+                animation-delay: 100ms;
+            }
+
+            &:nth-child(4) {
+                animation-delay: 200ms;
+            }
+
+            &:nth-child(3) {
+                animation-delay: 300ms;
+            }
+
+            &:nth-child(2) {
+                animation-delay: 400ms;
+            }
+
+            &:nth-child(1) {
+                animation-delay: 500ms;
+            }
+        }
+    }
+}
+
+@keyframes loading {
+    0% {
+        transform: translateX(-350px);
+        opacity: 0;
+    }
+
+    35%,
+    65% {
+        transform: translateX(0px);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateX(350px);
+        opacity: 0;
+    }
+}

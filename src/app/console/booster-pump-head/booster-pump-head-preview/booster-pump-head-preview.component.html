@@ -1,0 +1,449 @@
+<div class="container">
+    <div class="card">
+        <div class="card-body">
+            <div id="top-panel" class="d-flex my-3 gap-2">
+                <button class="btn btn-rounded btn-light" (click)="showInput.emit()">
+                    <i class='bx bx-arrow-back me-2'></i>Back
+                </button>
+                <button class="btn btn-rounded btn-primary" (click)="generatePDF()">
+                    <i class='bx bx-printer me-2'></i>Print
+                </button>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-preview table-borderless">
+                    <tbody>
+                        <tr>
+                            <td class="mainHeader">CIRCULATION PUMP CALCULATION</td>
+                        </tr>
+                        <tr>
+                            <td class="subHeader">Pump Information</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table class="table table-preview table-bordered">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                Project
+                                            </td>
+                                            <td>
+                                                <span>{{this.getValue(this.data.project)}}</span>
+                                            </td>
+                                            <td>
+                                                Date
+                                            </td>
+                                            <td>
+                                                <span>{{this.getDate(this.data.date)}}</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                System
+                                            </td>
+                                            <td>
+                                                <span>{{this.getValue(this.data.system)}}</span>
+                                            </td>
+                                            <td>
+                                                Pump Ref
+                                            </td>
+                                            <td>
+                                                <span>{{this.getValue(this.data.pumpRef)}}</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+
+                        <!-- Important Remarks -->
+                        <tr>
+                            <td class="sectionHeader">
+                                Important Remarks
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <ul>
+                                    <li>Pressure drop in straight pipe is calculated using the most accurate method
+                                        (Darcy-Weisbach
+                                        equation).</li>
+                                    <li>Pressure drop in fttings is calculated using k or zeta coefcient which depends
+                                        on geometry and
+                                        size.</li>
+                                    <li>Pressure drop in valves is calculated using valve coefcient Kv or Cv.</li>
+                                </ul>
+                            </td>
+                        </tr>
+
+                        <!-- 1. Pipe Sections -->
+                        <tr>
+                            <td class="sectionHeader">1. Pipe Sections</td>
+                        </tr>
+                        <tr *ngFor="let pipeSection of this.data.pipeSections; let i = index">
+                            <td>
+                                <table class="table table-preview table-bordered">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                {{'Section' + ' ' + (i + 1)}}
+                                            </td>
+                                            <td colspan="5">
+                                                <span>{{this.getValue(pipeSection.sectionId)}}</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Flow Rate
+                                            </td>
+                                            <td>
+                                                <span>{{this.getValue(pipeSection.o3) + ' ' +
+                                                    this.getValue(this.data.tx1)}}</span>
+                                            </td>
+                                            <td>
+                                                Flow Velocity
+                                            </td>
+                                            <td>
+                                                <span>{{this.getValue(pipeSection.o4) + ' ' +
+                                                    this.getValue(pipeSection.tx2)}}</span>
+                                            </td>
+                                            <td>
+                                                Pipe Size
+                                            </td>
+                                            <td>
+                                                <span>{{this.getValue(pipeSection.o44)}}</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Pipe Material
+                                            </td>
+                                            <td colspan="2">
+                                                <span>{{this.getValue(pipeSection.o45)}}</span>
+                                            </td>
+                                            <td>
+                                                Size Standard
+                                            </td>
+                                            <td colspan="2">
+                                                <span>{{this.getValue(pipeSection.tx4)}}</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Grade/Class
+                                            </td>
+                                            <td colspan="5">
+                                                <span>{{this.getValue(pipeSection.tx5)}}</span>
+                                            </td>
+                                        </tr>
+                                        <!-- Straight Pipe -->
+                                        <tr>
+                                            <td class="sectionSubHeader" colspan="6">
+                                                Straight Pipe
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="noPadding noBorder" colspan="6">
+                                                <table class="table table-preview table-bordered">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td style="width:100%">Length</td>
+                                                            <td>Pressoure Loss</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><span>{{this.getValue(pipeSection.o5)
+                                                                    + ' ' +
+                                                                    this.getValue(pipeSection.tx6)}}</span>
+                                                            </td>
+                                                            <td><span>{{this.getValue(pipeSection.o6)
+                                                                    + ' ' +
+                                                                    this.getValue(this.data.tx7)}}</span>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        <!-- Fittings -->
+                                        <tr>
+                                            <td class="sectionSubHeader" colspan="6">
+                                                Fittings
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="noPadding noBorder" colspan="6">
+                                                <table class="table table-preview table-bordered">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td style="width:100%">Type</td>
+                                                            <td class="text-center">K-Factor</td>
+                                                            <td class="text-center">Qty</td>
+                                                            <td class="text-center">Pressure Loss
+                                                            </td>
+                                                        </tr>
+                                                        <tr *ngFor="let fitting of pipeSection.fittings; let i = index">
+                                                            <td><span>{{this.getValue(fitting.o7)}}</span>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <span>{{this.getValue(fitting.o8)}}</span>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <span>{{this.getValue(fitting.o9)}}</span>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <span>{{this.getValue(fitting.o10)
+                                                                    + ' ' +
+                                                                    this.getValue(this.data.tx7)}}</span>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-end" colspan="3">
+                                                                <strong>Total</strong>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <span><strong>{{this.getValue(pipeSection.o18)
+                                                                        + ' ' +
+                                                                        this.getValue(this.data.tx7)}}</strong></span>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        <!-- Valves -->
+                                        <tr>
+                                            <td class="sectionSubHeader" colspan="6">
+                                                Valves
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="noPadding noBorder" colspan="6">
+                                                <table class="table table-preview table-bordered">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td style="width:50%">Material</td>
+                                                            <td style="width:50%">Type</td>
+                                                            <td class="text-center">Size</td>
+                                                            <td class="text-center">
+                                                                {{this.getValue(pipeSection.tx8)}}
+                                                            </td>
+                                                            <td class="text-center">Qty</td>
+                                                            <td class="text-center">Pressure Loss
+                                                            </td>
+                                                        </tr>
+                                                        <tr *ngFor="let valve of pipeSection.valves; let i = index">
+                                                            <td><span>{{this.getValue(valve.o33)}}</span>
+                                                            </td>
+                                                            <td><span>{{this.getValue(valve.o11)}}</span>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                {{this.getValue(valve.o34)}}
+                                                            </td>
+                                                            <td class="text-center">
+                                                                {{this.getValue(valve.o12)}}
+                                                            </td>
+                                                            <td class="text-center">
+                                                                {{this.getValue(valve.o13)}}
+                                                            </td>
+                                                            <td class="text-center">
+                                                                {{this.getValue(valve.o14) + ' '
+                                                                + this.getValue(this.data.tx7)}}
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-end" colspan="5">
+                                                                <strong>Total</strong>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <span><strong>{{this.getValue(pipeSection.o19)
+                                                                        + ' ' +
+                                                                        this.getValue(this.data.tx7)}}</strong></span>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="sectionSubHeader" colspan="6">
+                                                Special Components
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="noPadding noBorder" colspan="6">
+                                                <table class="table table-preview table-bordered">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td style="width:100%">Type</td>
+                                                            <td>Qty</td>
+                                                            <td>Pressoure Loss</td>
+                                                        </tr>
+                                                        <tr
+                                                            *ngFor="let specialComponent of pipeSection.specialComponents; let i = index">
+                                                            <td><span>{{this.getValue(specialComponent.o15)}}</span>
+                                                            </td>
+                                                            <td><span>{{this.getValue(specialComponent.o16)}}</span>
+                                                            </td>
+                                                            <td><span>{{this.getValue(specialComponent.o17)
+                                                                    + ' ' +
+                                                                    this.getValue(this.data.tx7)}}</span>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-end" colspan="2">
+                                                                <strong>Total</strong>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <span><strong>{{this.getValue(pipeSection.o20)
+                                                                        + ' ' +
+                                                                        this.getValue(this.data.tx7)}}</strong></span>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-center" colspan="6">
+                                                <span><strong>{{'SECTION TOTAL PRESSURE LOSS - ' +
+                                                        this.stpl(pipeSection) + ' ' +
+                                                        this.getValue(this.data.tx7)}}</strong></span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+
+                        <!-- 2. Pipe Sections Pressure Loss Summary -->
+                        <tr>
+                            <td class="sectionHeader">2. Pipe Sections Pressure Loss Summary</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table class="table table-preview table-bordered">
+                                    <tbody>
+                                        <tr>
+                                            <td class="text-center">Straight Pipes</td>
+                                            <td class="text-center">Fittings</td>
+                                            <td class="text-center">Valves</td>
+                                            <td class="text-center">Special Components</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-center"><span>{{this.getValue(this.data.o21)
+                                                    + ' ' + this.getValue(this.data.tx7)}}</span></td>
+                                            <td class="text-center"><span>{{this.getValue(this.data.o22)
+                                                    + ' ' + this.getValue(this.data.tx7)}}</span></td>
+                                            <td class="text-center"><span>{{this.getValue(this.data.o23)
+                                                    + ' ' + this.getValue(this.data.tx7)}}</span></td>
+                                            <td class="text-center"><span>{{this.getValue(this.data.o24)
+                                                    + ' ' + this.getValue(this.data.tx7)}}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-center" colspan="4">
+                                                <span><strong>{{'TOTAL PRESSURE LOSS -' + ' ' +
+                                                        this.getValue(this.data.o25) + ' ' +
+                                                        this.getValue(this.data.tx7)}}</strong></span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+
+                        <!-- 3. Equipments -->
+                        <tr>
+                            <td class="sectionHeader">3. Equipments</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table class="table table-preview table-bordered">
+                                    <tbody>
+                                        <tr>
+                                            <td>Equipment</td>
+                                            <td style="width: 50%;">Description</td>
+                                            <td style="width: 50%;">Model</td>
+                                            <td class="text-center">Flow Rate</td>
+                                            <td class="text-center">Pressure Loss</td>
+                                        </tr>
+                                        <tr *ngFor="let equipment of this.data.equipments; let i = index">
+                                            <td><span>{{'Equipment' + ' ' + (i + 1)}}</span></td>
+                                            <td><span>{{this.getValue(equipment.o26)}}</span></td>
+                                            <td><span>{{this.getValue(equipment.o27)}}</span></td>
+                                            <td class="text-center">
+                                                <span>{{this.getValue(equipment.o28) + ' ' +
+                                                    this.getValue(this.data.tx1)}}</span>
+                                            </td>
+                                            <td class="text-center">
+                                                <span>{{this.getValue(equipment.o29) + ' ' +
+                                                    this.getValue(this.data.tx7)}}</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-end" colspan="4"><strong>Total</strong></td>
+                                            <td class="text-center">
+                                                <span><strong>{{this.getValue(this.data.o30) + ' ' +
+                                                        this.getValue(this.data.tx7)}}</strong></span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+
+                        <!-- 4. Pump Head & Flow -->
+                        <tr>
+                            <td class="sectionHeader">4. Pump Head & Flow</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table class="table table-preview table-bordered">
+                                    <tbody>
+                                        <tr>
+                                            <td>Pump Flow Rate</td>
+                                            <td><span>{{this.getValue(this.data.o31) + ' ' +
+                                                    this.getValue(this.data.tx1)}}</span></td>
+                                            <td>Pump Head</td>
+                                            <td><span>{{this.getValue(this.data.o32) + ' ' +
+                                                    this.getValue(this.data.tx7)}}</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+
+                        <!-- 4. Static Head & Residual Pressure -->
+                        <tr>
+                            <td class="sectionHeader">4. Static Head & Residual Pressure</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table class="table table-preview table-bordered">
+                                    <tbody>
+                                        <tr>
+                                            <td>Static Head</td>
+                                            <td><span>{{this.getValue(this.data.o33) + ' ' +
+                                                    this.getValue(this.data.tx6)}}</span></td>
+                                            <td>Residual Pressure At Point Of Use</td>
+                                            <td><span>{{this.getValue(this.data.o34) + ' ' +
+                                                    this.getValue(this.data.tx7)}}</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="d-flex justify-content-center mt-3 gap-1">
+                <button class="btn btn-rounded btn-light" (click)="showInput.emit()">
+                    <i class='bx bx-arrow-back me-2'></i>Back
+                </button>
+                <button class="btn btn-rounded btn-primary" (click)="generatePDF()">
+                    <i class='bx bx-printer me-2'></i>Print
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

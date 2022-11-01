@@ -1,0 +1,197 @@
+<div class="container">
+    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+        <h4 class="mb-sm-0">Pump Affinity Laws</h4>
+
+        <div class="page-title-right">
+            
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2>Affinity laws provide approximation of the change in pump performance with the change in rotational speed or impeller diameter of centrifugal pumps.</h2>
+        </div>
+        <div class="card-body">
+            <div class="form-horizontal" [formGroup]="calculationForm">
+                <!-- INPUT -->
+                <h4 class="card-title">Input</h4>
+                <div class="row">
+                    <div class="col-xl-4">
+                        <div class="form-group">
+                            <label class="form-label">Units System</label>
+                            <ng-select [searchable]="false"
+                                [clearable]="false" formControlName="unitSystem">
+                                <ng-option *ngFor="let unitSystem of unitsSystems" [value]="unitSystem.value">
+                                    {{unitSystem.label}}</ng-option>
+                            </ng-select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row justify-content-between">
+                    <div class="col-xl-4">
+                        <div class="form-group">
+                            <label class="form-label">Initial Speed (N1)</label>
+                            <div class="input-group">
+                                <input type="number" min="0" pattern="\d+(\.\d+)?" class="form-control" formControlName="initialSpeed"
+                                    [ngClass]="{'is-invalid': f['initialSpeed'].errors}">
+                                <span class="input-group-text">RPM</span>
+                            
+                                <div *ngIf="f['initialSpeed'].errors" class="invalid-tooltip">
+                                    <span *ngIf="f['initialSpeed'].errors?.['required']">Initial Speed is required.</span>
+                                    <span *ngIf="!f['initialSpeed'].errors?.['required'] && f['initialSpeed'].errors?.['pattern']">Value
+                                        should be valid and contains a positive number.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4">
+                        <div class="form-group">
+                            <label class="form-label">New Speed (N2)</label>
+                            <div class="input-group">
+                                <input type="number" min="0" pattern="\d+(\.\d+)?" class="form-control" formControlName="newSpeed"
+                                    [ngClass]="{'is-invalid': f['newSpeed'].errors}">
+                                <span class="input-group-text">RPM</span>
+                            
+                                <div *ngIf="f['newSpeed'].errors" class="invalid-tooltip">
+                                    <span *ngIf="f['newSpeed'].errors?.['required']">New Speed is required.</span>
+                                    <span *ngIf="!f['newSpeed'].errors?.['required'] && f['newSpeed'].errors?.['pattern']">Value
+                                        should be valid and contains a positive number.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row justify-content-between">
+                    <div class="col-xl-4">
+                        <div class="form-group">
+                            <label class="form-label">Initial Impeller Dia (D1)</label>
+                            <div class="input-group">
+                                <input type="number" min="0" pattern="\d+(\.\d+)?" class="form-control" formControlName="initialImpellerDia"
+                                    [ngClass]="{'is-invalid': f['initialImpellerDia'].errors}">
+                                <span class="input-group-text">{{f['unitSystem'].value == 1 ? 'mm' : 'inch'}}</span>
+                            
+                                <div *ngIf="f['initialImpellerDia'].errors" class="invalid-tooltip">
+                                    <span *ngIf="f['initialImpellerDia'].errors?.['required']">Initial Impeller Dia is required.</span>
+                                    <span *ngIf="!f['initialImpellerDia'].errors?.['required'] && f['initialImpellerDia'].errors?.['pattern']">Value
+                                        should be valid and contains a positive number.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4">
+                        <div class="form-group">
+                            <label class="form-label">New Impeller Dia (D2)</label>
+                            <div class="input-group">
+                                <input type="number" min="0" pattern="\d+(\.\d+)?" class="form-control" formControlName="newImpellerDia"
+                                    [ngClass]="{'is-invalid': f['newImpellerDia'].errors}">
+                                <span class="input-group-text">{{f['unitSystem'].value == 1 ? 'mm' : 'inch'}}</span>
+                            
+                                <div *ngIf="f['newImpellerDia'].errors" class="invalid-tooltip">
+                                    <span *ngIf="f['newImpellerDia'].errors?.['required']">New Impeller Dia is required.</span>
+                                    <span *ngIf="!f['newImpellerDia'].errors?.['required'] && f['newImpellerDia'].errors?.['pattern']">Value
+                                        should be valid and contains a positive number.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xl-4">
+                        <div class="form-group">
+                            <label class="form-label">Flow Rate (Q1)</label>
+                            <div class="input-group">
+                                <input type="number" min="0" pattern="\d+(\.\d+)?" class="form-control" formControlName="flowRate"
+                                    [ngClass]="{'is-invalid': f['flowRate'].errors}">
+                                <span class="input-group-text">{{f['unitSystem'].value == 1 ? 'l/s' : 'US GPM'}}</span>
+                            
+                                <div *ngIf="f['flowRate'].errors" class="invalid-tooltip">
+                                    <span *ngIf="f['flowRate'].errors?.['required']">Flow Rate is required.</span>
+                                    <span *ngIf="!f['flowRate'].errors?.['required'] && f['flowRate'].errors?.['pattern']">Value
+                                        should be valid and contains a positive number.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 mt-auto text-center">
+                        <div class="form-group">
+                            <label class="form-label">Q1/Q2 = (N1/N2) x (D1/D2)</label>
+                        </div>
+                    </div>
+                    <div class="col-xl-4">
+                        <div class="form-group">
+                            <label class="form-label">New Flow Rate (Q2)</label>
+                            <div class="input-group">
+                                <label class="form-control">{{newFlowRate.toFixed(2)}}</label>
+                                <span class="input-group-text">{{f['unitSystem'].value == 1 ? 'l/s' : 'US GPM'}}</span>
+                            </div>                            
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xl-4">
+                        <div class="form-group">
+                            <label class="form-label">Head (H1)</label>
+                            <div class="input-group">
+                                <input type="number" min="0" pattern="\d+(\.\d+)?" class="form-control" formControlName="head"
+                                    [ngClass]="{'is-invalid': f['head'].errors}">
+                                <span class="input-group-text">{{f['unitSystem'].value == 1 ? 'bar' : 'PSI'}}</span>
+                            
+                                <div *ngIf="f['head'].errors" class="invalid-tooltip">
+                                    <span *ngIf="f['head'].errors?.['required']">Head is required.</span>
+                                    <span *ngIf="!f['head'].errors?.['required'] && f['head'].errors?.['pattern']">Value
+                                        should be valid and contains a positive number.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 mt-auto text-center">
+                        <div class="form-group">
+                            <label class="form-label">H1/H2 = (N1/N2)² x (D1/D2)²</label>
+                        </div>
+                    </div>
+                    <div class="col-xl-4">
+                        <div class="form-group">
+                            <label class="form-label">New Head (H2)</label>
+                            <div class="input-group">
+                                <label class="form-control">{{newHead.toFixed(2)}}</label>
+                                <span class="input-group-text">{{f['unitSystem'].value == 1 ? 'bar' : 'PSI'}}</span>
+                            </div>                            
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xl-4">
+                        <div class="form-group">
+                            <label class="form-label">Power (P1)</label>
+                            <div class="input-group">
+                                <input type="number" min="0" pattern="\d+(\.\d+)?" class="form-control" formControlName="power"
+                                    [ngClass]="{'is-invalid': f['power'].errors}">
+                                <span class="input-group-text">{{f['unitSystem'].value == 1 ? 'kW' : 'hp'}}</span>
+                            
+                                <div *ngIf="f['power'].errors" class="invalid-tooltip">
+                                    <span *ngIf="f['power'].errors?.['required']">Power is required.</span>
+                                    <span *ngIf="!f['power'].errors?.['required'] && f['power'].errors?.['pattern']">Value
+                                        should be valid and contains a positive number.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 mt-auto text-center">
+                        <div class="form-group">
+                            <label class="form-label">P1/P2 = (N1/N2)³ x (D1/D2)³</label>
+                        </div>
+                    </div>
+                    <div class="col-xl-4">
+                        <div class="form-group">
+                            <label class="form-label">New Power (P2)</label>
+                            <div class="input-group">
+                                <label class="form-control">{{newPower.toFixed(2)}}</label>
+                                <span class="input-group-text">{{f['unitSystem'].value == 1 ? 'kW' : 'hp'}}</span>
+                            </div>                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

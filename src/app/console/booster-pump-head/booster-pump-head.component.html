@@ -1,0 +1,330 @@
+<div *ngIf="!isLoading" class="container" [ngClass]="{'d-none': showResult, 'd-block': !showResult}">
+    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+        <h4 class="mb-sm-0">Booster Pump Head Calculations</h4>
+
+        <div class="page-title-right">
+            <ol class="breadcrumb m-0">
+                <li class="breadcrumb-item"><a href="javascript: void(0);"><i class='bx bx-info-circle'></i>Important
+                        Remark</a></li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <form class="form-horizontal" [formGroup]="calculationForm" (ngSubmit)="onSubmit()">
+                <!-- PUMP INFORMATION -->
+                <h4 class="card-title">Pump Information</h4>
+                <div class="row">
+                    <div class="col-xl-4">
+                        <div class="form-group mb-3">
+                            <label class="form-label">Project</label>
+                            <input type="text" class="form-control" formControlName="project">
+                        </div>
+                    </div>
+                    <div class="col-xl-4">
+                        <div class="form-group mb-3">
+                            <label class="form-label">System</label>
+                            <input type="text" class="form-control" formControlName="system">
+                        </div>
+                    </div>
+                    <div class="col-xl-4">
+                        <div class="form-group mb-3">
+                            <label class="form-label">Pump Ref</label>
+                            <input type="text" class="form-control" formControlName="pumpRef">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- UNITS AND WORKING FLUID -->
+                <div class="row">
+                    <div class="col-xl-7">
+                        <h5 class="card-title">Units</h5>
+                        <div class="row">
+                            <div class="col-xl-4">
+                                <div class="form-group">
+                                    <label class="form-label">Units System</label>
+                                    <ng-select (change)="unitSystemChanged($event)" [searchable]="false"
+                                        [clearable]="false" formControlName="unitSystem">
+                                        <ng-option *ngFor="let unitSystem of unitsSystems" [value]="unitSystem.value">
+                                            {{unitSystem.label}}</ng-option>
+                                    </ng-select>
+                                </div>
+                            </div>
+                            <div class="col-xl-4">
+                                <div class="form-group">
+                                    <label class="form-label">Flow Rate</label>
+                                    <ng-select (change)="flowRateChanged($event)" [searchable]="false"
+                                        [clearable]="false" formControlName="flowRate">
+                                        <ng-option *ngFor="let rate of flowRates" [value]="rate.value">
+                                            {{rate.label}}</ng-option>
+                                    </ng-select>
+                                </div>
+                            </div>
+                            <div class="col-xl-4">
+                                <div class="form-group">
+                                    <label class="form-label">Length</label>
+                                    <ng-select (change)="lengthChanged($event)" [searchable]="false" [clearable]="false"
+                                        formControlName="length">
+                                        <ng-option *ngFor="let length of lengths" [value]="length.value">
+                                            {{length.label}}</ng-option>
+                                    </ng-select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-5">
+                        <h5 class="card-title">Working Fluid</h5>
+                        <div class="row">
+                            <div class="col-xl-6">
+                                <div class="form-group">
+                                    <label class="form-label">Fluid Type</label>
+                                    <ng-select [searchable]="false"
+                                        [clearable]="false" formControlName="fluidType">
+                                        <ng-option *ngFor="let fluidType of fluidTypes" [value]="fluidType.value">
+                                            {{fluidType.label}}</ng-option>
+                                    </ng-select>
+                                </div>
+                            </div>
+                            <div class="col-xl-6">
+                                <div class="form-group">
+                                    <label class="form-label">Fluid Temperature</label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" formControlName="fluidTemperature"
+                                            [ngClass]="{ 'is-invalid': isSubmitted && f['fluidTemperature'].errors }">
+                                        <!-- <span class="input-group-text">º{{f['fluidTemperatureUnit'].value}}</span> -->
+                                        <span class="input-group-text">{{f['unitSystem'].value == 1 ? 'ºC' : 'ºF'}}</span>
+                                        
+                                        <div *ngIf="isSubmitted && f['fluidTemperature'].errors"
+                                            class="invalid-tooltip">
+                                            <span *ngIf="f['fluidTemperature'].errors['required']">Fluid Temperature is
+                                                required.</span>
+                                            <span
+                                                *ngIf="!f['fluidTemperature'].errors['required'] && f['fluidTemperature'].errors['temperatureRange']">
+                                                Out of range.
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PIPE TYPE -->
+                <h4 class="card-title">Pipe Type</h4>
+                <div class="row">
+                    <div class="col-xl-3">
+                        <div class="form-group">
+                            <label class="form-label">Pipe Material</label>
+                            <ng-select (change)="pipeMaterialChanged($event)" [searchable]="false" [clearable]="false"
+                                formControlName="pipeMaterial">
+                                <ng-option *ngFor="let pipeMaterial of pipeMaterials" [value]="pipeMaterial.value">
+                                    {{pipeMaterial.label}}</ng-option>
+                            </ng-select>
+                        </div>
+                    </div>
+                    <div class="col-xl-3">
+                        <div class="form-group">
+                            <label class="form-label">Standard System</label>
+                            <ng-select (change)="standardSystemChanged($event)" [searchable]="false" [clearable]="false"
+                                formControlName="standardSystem">
+                                <ng-option *ngFor="let standardSystem of standardSystems"
+                                    [value]="standardSystem.value">{{standardSystem.label}}</ng-option>
+                            </ng-select>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="form-group">
+                            <label class="form-label">Pipe Standard</label>
+                            <label class="form-control">{{f['sizeStandard'].value.label}}</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PIPE SECTIONS -->
+                <h4 class="card-title">Pipe Sections</h4>
+                <ngb-accordion formArrayName="pipeSections" #sectionAcc="ngbAccordion" activeIds="section-panel-0"
+                    [destroyOnHide]="false">
+                    <ng-container *ngFor="let pipeSection of pipeSections['controls']; let i = index">
+                        <ngb-panel id="section-panel-{{i}}">
+                            <ng-template ngbPanelHeader let-opened="opened">
+                                <div class="accordion-button justify-content-between" [class.collapsed]="!opened">
+                                    <div class="d-flex">
+                                        <p class="mb-0">Section #{{i + 1}}</p>
+                                    </div>
+                                    <div class="d-flex">
+                                        <ul class="list-unstyled toolbar text-center mb-0 gap-1">
+                                            <li>
+                                                <a href="javascript: void(0);" *ngIf="i !== 0"
+                                                    class="btn btn-sm btn-soft-danger" title="Remove Pipe Section"
+                                                    (click)="removePipeSection(i);">
+                                                    <i class='bx bxs-trash'></i>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <button ngbPanelToggle class="btn btn-sm btn-soft-info toggle"
+                                                    title="Collapse/Expand">
+                                                    <i class='bx bx-chevron-down'></i>
+                                                </button>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </ng-template>
+                            <ng-template ngbPanelContent [formGroupName]="i">
+                                <app-pipe-section [pipeSectionForm]="$any(pipeSection)" [isSubmitted]="isSubmitted">
+                                </app-pipe-section>
+                            </ng-template>
+                        </ngb-panel>
+                    </ng-container>
+                </ngb-accordion>
+                <div class="d-flex justify-content-center my-3">
+                    <button class="btn btn-outline-primary" type="button" (click)="addPipeSection(sectionAcc);">Add
+                        Pipe Section</button>
+                </div>
+
+                <!-- EQUIPMENTS -->
+                <h4 class="card-title">Equipments (Filters, Softeners ... etc)</h4>
+                <div class="table-responsive">
+                    <table class="table table-borderless table-list">
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th>Model</th>
+                                <th>Flow Rate</th>
+                                <th>Pressure Loss</th>
+                                <th style="width: 70px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody formArrayName="equipments">
+                            <ng-container *ngFor="let equipment of equipments['controls']; let i = index">
+                                <tr [formGroupName]="i">
+                                    <td>
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" formControlName="description">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" formControlName="model">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <input type="number" min="0" pattern="\d+(\.\d+)?" class="form-control"
+                                                    formControlName="flowRate">
+                                                <span class="input-group-text">{{flowRates[f['flowRate'].value -
+                                                    1].label}}</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <input type="number" min="0" pattern="\d+(\.\d+)?" class="form-control"
+                                                    formControlName="pressureLoss">
+                                                <span class="input-group-text">{{f['unitSystem'].value === 1 ? 'm H2O' :
+                                                    'PSI'}}</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <ul class="list-unstyled toolbar text-center gap-1 mb-0">
+                                            <li>
+                                                <a href="javascript: void(0);" class="btn btn-sm btn-soft-danger"
+                                                    *ngIf="i !== 0" title="Remove Equipment"
+                                                    (click)="removeEquipment(i);">
+                                                    <i class='bx bxs-trash'></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="d-flex justify-content-center my-3">
+                    <button class="btn btn-outline-primary" type="button" (click)="addEquipment();">Add
+                        Equipment</button>
+                </div>
+
+                <!-- PUMP FLOW RATE -->
+                <div class="row">
+                    <div class="col-xl-3">
+                        <div class="form-group">
+                            <label class="form-label">Pump Flow Rate</label>
+                            <div class="input-group">
+                                <input type="number" min="0" pattern="\d+(\.\d+)?" class="form-control"
+                                    formControlName="pumpFlowRate"
+                                    [ngClass]="{ 'is-invalid': isSubmitted && f['pumpFlowRate'].errors }">
+                                <span class="input-group-text">{{flowRates[f['flowRate'].value - 1].label}}</span>
+
+                                <div *ngIf="isSubmitted && f['pumpFlowRate'].errors" class="invalid-tooltip">
+                                    <span *ngIf="f['pumpFlowRate'].errors?.['required']">Pump Flow Rate is
+                                        required.</span>
+                                    <span *ngIf="!f['pumpFlowRate'].errors?.['required'] && f['pumpFlowRate'].errors?.['pattern']">Value
+                                        should be valid and contains a positive number.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3">
+                        <div class="form-group">
+                            <label class="form-label">Static Height</label>
+                            <div class="input-group">
+                                <input type="number" min="0" pattern="\d+(\.\d+)?" class="form-control"
+                                    formControlName="i42"
+                                    [ngClass]="{ 'is-invalid': isSubmitted && f['i42'].errors }">
+                                <span class="input-group-text">{{lengths[f['length'].value - 1].label}}</span>
+                                
+                                <div *ngIf="isSubmitted && f['i42'].errors" class="invalid-tooltip">
+                                    <span *ngIf="f['i42'].errors?.['required']">Static Height is
+                                        required.</span>
+                                    <span *ngIf="!f['i42'].errors?.['required'] && f['i42'].errors?.['pattern']">Value
+                                        should be valid and contains a positive number.</span>
+                                    <span *ngIf="!f['i42'].errors['required'] && f['i42'].errors['i42Range']">
+                                        Out of range.
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3">
+                        <div class="form-group">
+                            <label class="form-label">Required Residual Pressure</label>
+                            <div class="input-group">
+                                <input type="number" min="0" pattern="\d+(\.\d+)?" class="form-control"
+                                    formControlName="i43"
+                                    [ngClass]="{ 'is-invalid': isSubmitted && f['i43'].errors }">
+                                <span class="input-group-text">{{f['unitSystem'].value === 1 ? 'm H2O' : 'PSI'}}</span>
+
+                                <div *ngIf="isSubmitted && f['i43'].errors" class="invalid-tooltip">
+                                    <span *ngIf="f['i43'].errors?.['required']">Required Residual Pressure is
+                                        required.</span>
+                                    <span
+                                        *ngIf="!f['i43'].errors?.['required'] && f['i43'].errors?.['pattern']">Value
+                                        should be valid and contains a positive number.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FORM SUBMIT -->
+                <div class="d-flex justify-content-center mt-4 mb-2">
+                    <button class="btn btn-rounded btn-primary btn-fixed" type="submit">
+                        <i *ngIf="isSubmitting" class="bx bx-loader bx-spin align-middle"></i>
+                        <span *ngIf="!isSubmitting">Calculate</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<app-loader *ngIf="isLoading"></app-loader>
+
+<app-booster-pump-head-preview [ngClass]="{'d-none': !showResult, 'd-block': showResult}" [data]="responseData" (showInput)="showResult = false"></app-booster-pump-head-preview>

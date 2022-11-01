@@ -1,0 +1,120 @@
+<div [formGroup]="fittingForm">
+    <div class="row">
+        <div class="col-xl-6">
+            <div class="form-check mb-3">
+                <input type="radio" id="standardPipeSize" class="form-check-input" formControlName="standard" [value]="1" (change)="flipStandardPipeSize()">
+                <label class="form-check-label">
+                    Using Standard Pipe Size Database
+                </label>
+            </div>
+            <div class="row">
+                <div class="col-xl-8">
+                    <div class="form-group">
+                        <label class="form-label">Type</label>
+                        <div class="input-group dropdown">
+                            <input type="text" class="form-control" formControlName="type" [value]="f['type'].value.label ? f['type'].value.label : ''" readonly 
+                                [ngClass]="{'is-invalid': isSubmitted && f['type'].errors}">
+                            <button #dropdownToggle [disabled]="f['standard'].value === 2" class="btn dropdown-toggle btn-outline-secondary" type="button" data-bs-toggle="dropdown" aria-haspopup="false"
+                                aria-expanded="false">
+                            </button>
+                            
+                            <div *ngIf="isSubmitted && f['type'].errors" class="invalid-tooltip">
+                                <span *ngIf="f['type'].errors?.['required']">Type is required.</span>
+                            </div>
+
+                            <div class="dropdown-menu dropdown-megamenu">
+                                <ngx-simplebar>
+                                    <div class="row">
+                                        <ng-container *ngFor="let type of fittingTypes; let i = index">
+                                            <div class="col-xl-2">
+                                                <a href="javascript: void(0);" (click)="selectType(type)" class="pipetype">
+                                                    <div class="card">
+                                                        <div class="card-body">
+                                                            <div class="pipetype-img position-relative">
+                                                                <img class="img-fluid mx-auto d-block" [src]="'./../../../assets/img/cp/' + type.picPath + '.png'" />
+                                                            </div>
+                                                            <div class="mt-1 text-center">
+                                                                <p>{{type.label}}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </ng-container>
+                                    </div>
+                                </ngx-simplebar>                         
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-4">
+                    <div class="form-group">
+                        <label class="form-label">Quantity</label>
+                        <div class="input-group">
+                            <input type="number" min="0" pattern="\d+(\.\d+)?" class="form-control" formControlName="standardQuantity" 
+                                [ngClass]="{'is-invalid': isSubmitted && f['standardQuantity'].errors}">
+                        
+                            <div *ngIf="isSubmitted && f['standardQuantity'].errors" class="invalid-tooltip">
+                                <span *ngIf="f['standardQuantity'].errors?.['required']">Quantity is required.</span>
+                                <span *ngIf="!f['standardQuantity'].errors?.['required'] && f['standardQuantity'].errors?.['pattern']">Value
+                                    should be valid and contains a positive number.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-6">
+            <div class="form-check mb-3">
+                <input type="radio" id="userDefinedPipeSize" class="form-check-input" formControlName="standard" [value]="2" (change)="flipStandardPipeSize()">
+                <label class="form-check-label">
+                    User-defined fitting
+                </label>
+            </div>
+            <div class="row">
+                <div class="col-xl-6">
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" formControlName="description" 
+                                [ngClass]="{'is-invalid': isSubmitted && f['description'].errors}">
+
+                            <div *ngIf="isSubmitted && f['description'].errors" class="invalid-tooltip">
+                                <span *ngIf="f['description'].errors?.['required']">Description is required.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3">
+                    <div class="form-group">
+                        <label class="form-label">K or Zeta Factor</label>
+                        <div class="input-group">
+                            <input type="number" min="0" pattern="\d+(\.\d+)?" class="form-control" formControlName="kZetaFactor"
+                                [ngClass]="{'is-invalid': isSubmitted && f['kZetaFactor'].errors}">
+                            
+                            <div *ngIf="isSubmitted && f['kZetaFactor'].errors" class="invalid-tooltip">
+                                <span *ngIf="f['kZetaFactor'].errors?.['required']">K or Zeta Factor is required.</span>
+                                <span *ngIf="!f['kZetaFactor'].errors?.['required'] && f['kZetaFactor'].errors?.['pattern']">Value
+                                    should be valid and contains a positive number.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3">
+                    <div class="form-group">
+                        <label class="form-label">Quantity</label>
+                        <div class="input-group">
+                            <input type="number" min="0" pattern="\d+(\.\d+)?" class="form-control" formControlName="userQuantity"
+                                [ngClass]="{'is-invalid': isSubmitted && f['userQuantity'].errors}">
+                        
+                            <div *ngIf="isSubmitted && f['userQuantity'].errors" class="invalid-tooltip">
+                                <span *ngIf="f['userQuantity'].errors?.['required']">Quantity is required.</span>
+                                <span *ngIf="!f['userQuantity'].errors?.['required'] && f['userQuantity'].errors?.['pattern']">Value
+                                    should be valid and contains a positive number.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

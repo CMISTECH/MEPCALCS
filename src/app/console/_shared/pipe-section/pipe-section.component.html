@@ -1,0 +1,265 @@
+<div [formGroup]="pipeSectionForm">
+    <div class="row">
+        <div class="col-xl-4">
+            <div class="form-group">
+                <label class="form-label">Section ID</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" formControlName="sectionId" 
+                        [ngClass]="{'is-invalid': isSubmitted && f['sectionId'].errors}">
+
+                    <div *ngIf="isSubmitted && f['sectionId'].errors" class="invalid-tooltip">
+                        <span *ngIf="f['sectionId'].errors?.['required']">ection ID is required.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4">
+            <div class="form-group">
+                <label class="form-label">Flow Rate</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" formControlName="flowRate"
+                        [ngClass]="{'is-invalid': isSubmitted && f['flowRate'].errors}">
+                    <span class="input-group-text">{{flowRate.label}}</span>
+                
+                    <div *ngIf="isSubmitted && f['flowRate'].errors" class="invalid-tooltip">
+                        <span *ngIf="f['flowRate'].errors?.['required']">Flow Rate is required.</span>
+                        <span *ngIf="!f['flowRate'].errors?.['required'] && f['flowRate'].errors?.['flowRateRange']">Out of
+                            range.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4">
+            <div class="form-group">
+                <label class="form-label">Length</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" formControlName="length" 
+                        [ngClass]="{'is-invalid': isSubmitted && f['length'].errors}">
+                    <span class="input-group-text">{{length.label}}</span>
+                    
+                    <div *ngIf="isSubmitted && f['length'].errors" class="invalid-tooltip">
+                        <span *ngIf="f['length'].errors?.['required']">Length is required.</span>
+                        <span *ngIf="!f['length'].errors?.['required'] && f['length'].errors?.['lengthRange']">Out of
+                            range.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h4 class="card-title">Pipe Size</h4>
+    <div class="row">
+        <div class="col-xl-6">
+            <div class="form-check mb-3">
+                <input type="radio" id="standardPipeSize" class="form-check-input" formControlName="standard" [value]="1" (change)="flipStandardPipeSize()">
+                <label class="form-check-label">
+                    Using Standard Pipe Size Database
+                </label>
+            </div>
+            <div class="row">
+                <div class="col-xl-4">
+                    <div class="form-group">
+                        <label class="form-label">Pipe Grade</label>
+                        <ng-select (change)="pipeGradeChanged($event)" [searchable]="false"
+                            [clearable]="false" formControlName="pipeGrade">
+                            <ng-option *ngFor="let pipeGrade of pipeGrades"
+                                [value]="pipeGrade.value">{{pipeGrade.label}}</ng-option>
+                        </ng-select>
+                    </div>
+                </div>
+                <div class="col-xl-4">
+                    <div class="form-group">
+                        <label class="form-label">Pipe Size</label>
+                        <ng-select [searchable]="false"
+                            [clearable]="false" formControlName="pipeSize">
+                            <ng-option *ngFor="let pipeSize of pipeSizes"
+                                [value]="pipeSize">{{pipeSize}}</ng-option>
+                        </ng-select>
+                    </div>
+                </div>
+                <div class="col-xl-4">
+                    <div class="form-group">
+                        <label class="form-label">Thickness</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" formControlName="thickness"
+                                [ngClass]="{'is-invalid': isSubmitted && f['thickness'].errors}">
+                            <span class="input-group-text">{{unitSystem === 1 ? 'mm' : 'inch'}}</span>
+                        
+                            <div *ngIf="isSubmitted && f['thickness'].errors" class="invalid-tooltip">
+                                <span *ngIf="f['thickness'].errors?.['required']">Thickness is required.</span>
+                                <span *ngIf="!f['thickness'].errors?.['required'] && f['thickness'].errors?.['thicknessRange']">Out of
+                                    range.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-6">
+            <div class="form-check mb-3">
+                <input type="radio" id="userDefinedPipeSize" class="form-check-input" formControlName="standard" [value]="2" (change)="flipStandardPipeSize()">
+                <label class="form-check-label">
+                    User-defined pipes size
+                </label>
+            </div>
+            <div class="row">
+                <div class="col-xl-8">
+                    <div class="form-group">
+                        <label class="form-label">Size Designation</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" formControlName="sizeDesignation" 
+                                [ngClass]="{'is-invalid': isSubmitted && f['sizeDesignation'].errors}">
+    
+                            <div *ngIf="isSubmitted && f['sizeDesignation'].errors" class="invalid-tooltip">
+                                <span *ngIf="f['sizeDesignation'].errors?.['required']">Size Designation is required.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-4">
+                    <div class="form-group">
+                        <label class="form-label">Internal Diameter</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" formControlName="internalDiameter"
+                                [ngClass]="{'is-invalid': isSubmitted && f['internalDiameter'].errors}">
+                            <span class="input-group-text">{{unitSystem === 1 ? 'mm' : 'inch'}}</span>
+    
+                            <div *ngIf="isSubmitted && f['internalDiameter'].errors" class="invalid-tooltip">
+                                <span *ngIf="f['internalDiameter'].errors?.['required']">Internal Diameter is required.</span>
+                                <span *ngIf="!f['internalDiameter'].errors?.['required'] && f['internalDiameter'].errors?.['internalDiameterRange']">
+                                    Out of range.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FITTINGS -->
+    <h4 class="card-title">Fittings</h4>
+    <div formArrayName="fittings">
+        <ng-container *ngFor="let fitting of fittings['controls']; let i = index">
+            <div [formGroupName]="i" class="border-bottom position-relative my-2 ">
+                <ul class="list-unstyled toolbar text-center gap-1 mb-0 position-absolute end-0 ">
+                    <li>
+                        <a href="javascript: void(0);" class="btn btn-sm btn-soft-danger" title="Remove Fitting"
+                            (click)="removeFitting(i);">
+                            <i class='bx bxs-trash'></i>
+                        </a>
+                    </li>
+                </ul>
+                <app-fitting [fittingForm]="$any(fitting)" [isSubmitted]="isSubmitted"></app-fitting>
+            </div>
+        </ng-container>
+    </div>
+    <div class="d-flex justify-content-center mt-4">
+        <button class="btn btn-transparent" type="button" (click)="addFitting();">
+            Add Fitting
+        </button>
+    </div>
+    
+    <!-- VALVES -->
+    <h4 class="card-title">Valves</h4>
+    <div formArrayName="valves">
+        <ng-container *ngFor="let valve of valves['controls']; let i = index">
+            <div [formGroupName]="i" class="border-bottom position-relative my-2 ">
+                <ul class="list-unstyled toolbar text-center gap-1 mb-0 position-absolute end-0 ">
+                    <li>
+                        <a href="javascript: void(0);" class="btn btn-sm btn-soft-danger" title="Remove Valve"
+                            (click)="removeValve(i);">
+                            <i class='bx bxs-trash'></i>
+                        </a>
+                    </li>
+                </ul>
+                <app-valve [valveForm]="$any(valve)" [isSubmitted]="isSubmitted"></app-valve>
+            </div>
+        </ng-container>
+    </div>
+    <div class="d-flex justify-content-center mt-4">
+        <button class="btn btn-transparent" type="button" (click)="addValve();">
+            Add Valve
+        </button>
+    </div>
+    
+    <!-- SPECIAL COMPONENTS -->
+    <h4 class="card-title">Special Components</h4>
+    <div class="table-responsive">
+        <table class="table table-borderless table-list">
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Pressure Loss</th>
+                    <th>Quantity</th>
+                    <th style="width: 70px;"></th>
+                </tr>
+            </thead>
+            <tbody formArrayName="specialComponents">
+                <ng-container *ngFor="let specialComponent of specialComponents['controls']; let i = index">
+                    <tr [formGroupName]="i">
+                        <td>
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <input type="text" class="form-control"  formControlName="description" 
+                                    [ngClass]="{ 'is-invalid': isSubmitted && specialComponent.get('description')?.errors }">
+                                    
+                                    <div *ngIf="isSubmitted && specialComponent.get('description')?.errors" class="invalid-tooltip">
+                                        <span *ngIf="specialComponent.get('description')?.errors!['required']">Description is required.</span>                                    
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <input type="number" min="0" pattern="\d+(\.\d+)?" class="form-control" formControlName="pressureLoss" 
+                                        [ngClass]="{ 'is-invalid': isSubmitted && specialComponent.get('pressureLoss')?.errors }">
+                                    <span class="input-group-text">{{unitSystem === 1 ? 'm H2O' : 'PSI'}}</span>
+                                
+                                    <div *ngIf="isSubmitted && specialComponent.get('pressureLoss')?.errors" class="invalid-tooltip">
+                                        <span *ngIf="specialComponent.get('pressureLoss')?.errors!['required']">Pressure Loss is required.</span>
+                                        <span *ngIf="!specialComponent.get('pressureLoss')?.errors!['required'] && specialComponent.get('pressureLoss')?.errors!['pattern']">
+                                            Value should be valid and contains a positive number.
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <input type="number" min="0" pattern="\d+(\.\d+)?" class="form-control" formControlName="quantity"
+                                        [ngClass]="{ 'is-invalid': isSubmitted && specialComponent.get('quantity')?.errors }">
+                                
+                                    <div *ngIf="isSubmitted && specialComponent.get('quantity')?.errors" class="invalid-tooltip">
+                                        <span *ngIf="specialComponent.get('quantity')?.errors!['required']">Quantity is required.</span>
+                                        <span *ngIf="!specialComponent.get('quantity')?.errors!['required'] && specialComponent.get('quantity')?.errors!['pattern']">
+                                            Value should be valid and contains a positive number.
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <ul class="list-unstyled toolbar text-center gap-1 mb-0">
+                                <li>
+                                    <a href="javascript: void(0);" class="btn btn-sm btn-soft-danger" title="Remove Special Component"
+                                        (click)="removeSpecialComponent(i);">
+                                        <i class='bx bxs-trash'></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </ng-container>
+            </tbody>
+        </table>
+    </div>
+    <div class="d-flex justify-content-center mt-2">
+        <button class="btn btn-transparent" type="button" (click)="addSpecialComponent();">
+            Add Special Component
+        </button>
+    </div>
+</div>
+
+

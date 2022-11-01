@@ -1,0 +1,240 @@
+<div class="container">
+    <div class="card">
+        <div class="card-body">
+            <div id="top-panel" class="d-flex my-3 gap-2">
+                <button class="btn btn-rounded btn-light" (click)="showInput.emit()">
+                    <i class='bx bx-arrow-back me-2'></i>Back
+                </button>
+                <button class="btn btn-rounded btn-primary" (click)="generatePDF()">
+                    <i class='bx bx-printer me-2'></i>Print
+                </button>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-preview table-borderless">
+                    <tbody>
+                        <tr>
+                            <td class="mainHeader">EXPANSION TANK SIZER CALCULATION</td>
+                        </tr>
+                        <tr>
+                            <td class="subHeader">Tank Information</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table class="table table-preview table-bordered table-fixed">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                Project
+                                            </td>
+                                            <td>
+                                                <span>{{this.getValue(this.data['info']?.project)}}</span>
+                                            </td>
+                                            <td>
+                                                Date
+                                            </td>
+                                            <td>
+                                                <span>{{this.getDate(this.data.dateTime)}}</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Expansion Tank Ref
+                                            </td>
+                                            <td colspan="3">
+                                                <span>{{this.getValue(this.data['info']?.expansionTankRef)}}</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+
+                        <!-- System Volume -->
+                        <tr>
+                            <td class="sectionHeader">1. System Volume</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table class="table table-preview table-bordered">
+                                    <tbody>
+                                        <tr>
+                                            <td style="width: 90%;">Fluid Volume in Pipes and Tanks</td>
+                                            <td class="text-center">
+                                                <span>{{this.getValue(this.data['systemVolume']?.volumeOfLiquidInPipes)
+                                                    + ' ' + (this.data['unitSystem'] == 1 ? 'm³' : 'US Gallon')}}</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2">
+                                                Fluid Volume in Equipment
+                                            </td>
+                                        </tr>
+                                        <tr
+                                            *ngFor="let equipment of this.data['systemVolume']?.equipments; let i = index">
+                                            <td><span class="ms-4 fst-italic">{{equipment['desc']}}</span></td>
+                                            <td class="text-center">
+                                                <span>{{this.getValue(equipment['volumeOfLiquidInEquipment']) + ' ' +
+                                                    (this.data['unitSystem'] == 1 ? 'm³' : 'US Gallon')}}</span></td>
+                                        </tr>
+                                        <tr *ngIf="this.data['systemType'] == 3">
+                                            <td>Fluid Volume in Solar Field</td>
+                                            <td class="text-center">
+                                                <span>{{this.getValue(this.data['systemVolume']?.volumeOfLiquidInSolar) +
+                                                    ' ' + (this.data['unitSystem'] == 1 ? 'm³' : 'US Gallon')}}</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-end">
+                                                <strong>Total System Volume</strong>
+                                            </td>
+                                            <td class="text-center">
+                                                <span><strong>{{this.getValue(this.data['totalSystemVolume']) + ' ' +
+                                                        (this.data['unitSystem'] == 1 ? 'm³' : 'US
+                                                        Gallon')}}</strong></span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+
+                        <!-- Expansion Volume -->
+                        <tr>
+                            <td class="sectionHeader">1. Expansion Volume</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table class="table table-preview table-bordered">
+                                    <tbody>
+                                        <tr>
+                                            <td style="width: 90%;">Filling Temperature</td>
+                                            <td class="text-center">
+                                                <span>{{this.getValue(this.data['expansionVolume']?.minTemp) + ' ' +
+                                                    (this.data['unitSystem'] == 1 ? '°C' : '°F')}}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Max Temperature</td>
+                                            <td class="text-center">
+                                                <span>{{this.getValue(this.data['expansionVolume']?.maxTemp) + ' ' +
+                                                    (this.data['unitSystem'] == 1 ? '°C' : '°F')}}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Density@ Filling Temperature</td>
+                                            <td class="text-center">
+                                                <span>{{this.getValue(this.data['expansionVolume']?.minDen) + ' ' +
+                                                    (this.data['unitSystem'] == 1 ? 'kg/m' : 'lb/ft³')}}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Density@ Max Temperature</td>
+                                            <td class="text-center">
+                                                <span>{{this.getValue(this.data['expansionVolume']?.maxDen) + ' ' +
+                                                    (this.data['unitSystem'] == 1 ? 'kg/m' : 'lb/ft³')}}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-end">
+                                                <strong>Expansion Volume</strong>
+                                            </td>
+                                            <td class="text-center">
+                                                <span><strong>{{this.getValue(this.data['expansionVolume']?.expansionVolume)
+                                                        + ' ' + (this.data['unitSystem'] == 1 ? 'm³' : 'US
+                                                        Gallon')}}</strong></span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+
+                        <!-- System Pressure -->
+                        <ng-container *ngIf="this.data['tankType'] == 2">
+                            <tr>
+                                <td class="sectionHeader">3. System Pressure</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <table class="table table-preview table-bordered">
+                                        <tbody>
+                                            <tr>
+                                                <td style="width: 90%;">Filling System Pressure at the Tank</td>
+                                                <td class="text-center">
+                                                    <span>{{this.getValue(this.data['systemPressure']?.minPre) + ' ' +
+                                                        (this.data['unitSystem'] == 1 ? 'barg' : 'PSIG')}}</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Max System Pressure at the Tank</td>
+                                                <td class="text-center">
+                                                    <span>{{this.getValue(this.data['systemPressure']?.maxPre) + ' ' +
+                                                        (this.data['unitSystem'] == 1 ? 'barg' : 'PSIG')}}</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </ng-container>
+
+                        <!-- Expansion Tank Characteristics -->
+                        <tr>
+                            <td class="sectionHeader">4. Expansion Tank Characteristic</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table class="table table-preview table-bordered">
+                                    <tbody>
+                                        <tr>
+                                            <td style="width: 10%;">Tank Type</td>
+                                            <td style="width: 40%;">
+                                                <span>{{this.getValue(this.data['expChar']?.tankType)}}</span></td>
+
+                                            <td style="width: 10%;">System Type</td>
+                                            <td style="width: 40%;">
+                                                <span>{{this.getValue(this.data['expChar']?.systemType)}}</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <table class="table table-preview table-bordered">
+                                    <tbody>
+                                        <tr>
+                                            <td style="width: 90%;" colspan="3">Net Content / Acceptance Volume</td>
+                                            <td class="text-center">
+                                                <span>{{this.getValue(this.data['expansionVolume']?.expansionVolume) + '
+                                                    ' + (this.data['unitSystem'] == 1 ? 'm³' : 'US Gallon')}}</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width: 90%;" colspan="3">Min Tank Volume</td>
+                                            <td class="text-center"><span>{{this.getValue(this.data['expChar']?.minTVol)
+                                                    + ' ' + (this.data['unitSystem'] == 1 ? 'm³' : 'US Gallon')}}</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width: 90%;" colspan="3">Initial (Pre-Charge) Tank Pressure</td>
+                                            <td class="text-center"><span>{{this.getValue(this.data['expChar']?.initPre)
+                                                    + ' ' + (this.data['unitSystem'] == 1 ? 'barg' : 'PSIG')}}</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="4">
+                                                <span>* The tank is sized to take the expansion volume and the volume of
+                                                    liquid in the solar feld in case of over heat</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="d-flex justify-content-center mt-3 gap-1">
+                <button class="btn btn-rounded btn-light" (click)="showInput.emit()">
+                    <i class='bx bx-arrow-back me-2'></i>Back
+                </button>
+                <button class="btn btn-rounded btn-primary" (click)="generatePDF()">
+                    <i class='bx bx-printer me-2'></i>Print
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

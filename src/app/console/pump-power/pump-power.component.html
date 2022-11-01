@@ -1,0 +1,161 @@
+<div class="container">
+    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+        <h4 class="mb-sm-0">Pump Power</h4>
+
+        <div class="page-title-right">
+            
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2>This calculator estimates the hydraulic, shaft (mechanical) and electric power for pumps.</h2>
+        </div>
+        <div class="card-body">
+            <div class="form-horizontal" [formGroup]="calculationForm">
+                <!-- INPUT -->
+                <h4 class="card-title">Input</h4>
+                <div class="row">
+                    <div class="col-xl-3">
+                        <div class="form-group">
+                            <label class="form-label">Units System</label>
+                            <ng-select (change)="unitSystemChanged($event)" [searchable]="false"
+                                [clearable]="false" formControlName="unitSystem">
+                                <ng-option *ngFor="let unitSystem of unitsSystems" [value]="unitSystem.value">
+                                    {{unitSystem.label}}</ng-option>
+                            </ng-select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xl-3">
+                        <div class="form-group">
+                            <label class="form-label">Flow Rate</label>
+                            <div class="input-group">
+                                <input type="number" min="0" pattern="\d+(\.\d+)?" class="form-control" formControlName="flowRate"
+                                    [ngClass]="{'is-invalid': f['flowRate'].errors}">
+                                <span class="input-group-text">{{f['unitSystem'].value == 1 ? 'l/s' : 'US GPM'}}</span>
+                            
+                                <div *ngIf="f['flowRate'].errors" class="invalid-tooltip">
+                                    <span *ngIf="f['flowRate'].errors?.['required']">Flow Rate is required.</span>
+                                    <span *ngIf="!f['flowRate'].errors?.['required'] && f['flowRate'].errors?.['pattern']">Value
+                                        should be valid and contains a positive number.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3">
+                        <div class="form-group">
+                            <label class="form-label">Head</label>
+                            <div class="input-group">
+                                <input type="number" min="0" pattern="\d+(\.\d+)?" class="form-control" formControlName="head"
+                                    [ngClass]="{'is-invalid': f['head'].errors}">
+                                <span class="input-group-text">{{f['unitSystem'].value == 1 ? 'm H₂O' : 'ft H₂O'}}</span>
+                            
+                                <div *ngIf="f['head'].errors" class="invalid-tooltip">
+                                    <span *ngIf="f['head'].errors?.['required']">Head is required.</span>
+                                    <span *ngIf="!f['head'].errors?.['required'] && f['head'].errors?.['pattern']">Value
+                                        should be valid and contains a positive number.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3">
+                        <div class="form-group">
+                            <label class="form-label">Fluid Type</label>
+                            <ng-select [searchable]="false"
+                                [clearable]="false" formControlName="fluidType">
+                                <ng-option *ngFor="let fluidType of fluidTypes" [value]="fluidType.value">
+                                    {{fluidType.label}}</ng-option>
+                            </ng-select>
+                        </div>
+                    </div>
+                    <div class="col-xl-3">
+                        <div class="form-group">
+                            <label class="form-label">Fluid Temperature</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" formControlName="fluidTemperature"
+                                    [ngClass]="{ 'is-invalid': f['fluidTemperature'].errors }">
+                                <!-- <span class="input-group-text">º{{f['fluidTemperatureUnit'].value}}</span> -->
+                                <span class="input-group-text">{{f['unitSystem'].value == 1 ? 'ºC' : 'ºF'}}</span>
+                                
+                                <div *ngIf="f['fluidTemperature'].errors" class="invalid-tooltip">
+                                    <span *ngIf="f['fluidTemperature'].errors['required']">Fluid Temperature is required.</span>
+                                    <span *ngIf="!f['fluidTemperature'].errors['required'] && f['fluidTemperature'].errors['temperatureRange']">
+                                        Out of range.
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row border-bottom mb-2">
+                    <div class="col-xl-3">
+                        <div class="form-group">
+                            <label class="form-label">Pump Efficiency</label>
+                            <div class="input-group">
+                                <input type="number" min="0" pattern="\d+(\.\d+)?" class="form-control" formControlName="pumpEfficiency"
+                                    [ngClass]="{'is-invalid': f['pumpEfficiency'].errors}">
+                                <span class="input-group-text">%</span>
+                            
+                                <div *ngIf="f['pumpEfficiency'].errors" class="invalid-tooltip">
+                                    <span *ngIf="f['pumpEfficiency'].errors?.['required']">Pump Efficiency is required.</span>
+                                    <span *ngIf="!f['pumpEfficiency'].errors?.['required'] && f['pumpEfficiency'].errors?.['pattern']">Value
+                                        should be valid and contains a positive number.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3">
+                        <div class="form-group">
+                            <label class="form-label">Motor Efficiency</label>
+                            <div class="input-group">
+                                <input type="number" min="0" pattern="\d+(\.\d+)?" class="form-control" formControlName="motorEfficiency"
+                                    [ngClass]="{'is-invalid': f['motorEfficiency'].errors}">
+                                <span class="input-group-text">%</span>
+                            
+                                <div *ngIf="f['motorEfficiency'].errors" class="invalid-tooltip">
+                                    <span *ngIf="f['motorEfficiency'].errors?.['required']">Motor Efficiency is required.</span>
+                                    <span *ngIf="!f['motorEfficiency'].errors?.['required'] && f['motorEfficiency'].errors?.['pattern']">Value
+                                        should be valid and contains a positive number.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- OUTPUT -->
+                <h4 class="card-title">Output</h4>
+                <div class="row">
+                    <div class="col-xl-4">
+                        <div class="form-group">
+                            <label class="form-label">Hydraulic Power</label>
+                            <div class="input-group">
+                                <label class="form-control">{{hydraulicPower.toFixed(2)}}</label>
+                                <span class="input-group-text">{{f['unitSystem'].value == 1 ? 'kW' : 'hp'}}</span>
+                            </div>                            
+                        </div>
+                    </div>
+                    <div class="col-xl-4">
+                        <div class="form-group">
+                            <label class="form-label">Shaft Power</label>
+                            <div class="input-group">
+                                <label class="form-control">{{shaftPower.toFixed(2)}}</label>
+                                <span class="input-group-text">{{f['unitSystem'].value == 1 ? 'kW' : 'hp'}}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4">
+                        <div class="form-group">
+                            <label class="form-label">Electric Power</label>
+                            <div class="input-group">
+                                <label class="form-control">{{electricPower.toFixed(2)}}</label>
+                                <span class="input-group-text">{{f['unitSystem'].value == 1 ? 'kW' : 'hp'}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
